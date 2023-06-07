@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdlib>
 #include <cstdint>
 #include <vector>
@@ -125,7 +127,7 @@ class Minefield
          *
          * @returns Field if in bounds
         */
-        std::optional<Field&> getField(FieldPos pos);
+        std::optional<Field> getField(FieldPos pos);
 
     public:
         size_t rows, cols;

@@ -15,6 +15,7 @@ pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET gtkmm-3.0 glibmm-2.4)
 #main program
 add_executable(main
     ${CMAKE_CURRENT_SOURCE_DIR}/src/logic.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 target_link_libraries(main PRIVATE ${GTKMM_LIBRARIES} ${OpenCV_LIBS})

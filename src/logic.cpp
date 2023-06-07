@@ -149,6 +149,8 @@ bool Minefield::doCascade(FieldPos pos) {
             });
         }
     } while (!field_queue.empty());
+
+    return false;
 }
 
 size_t Minefield::calculateNrOfBombs() {
@@ -165,7 +167,7 @@ Field& Minefield::getField(size_t row, size_t col) {
     return this->fields[row * this->cols + col];
 }
 
-std::optional<Field&> Minefield::getField(FieldPos pos) {
+std::optional<Field> Minefield::getField(FieldPos pos) {
     if (pos.row >= this->rows || pos.col >= this->cols) {
         return std::nullopt;
     }
