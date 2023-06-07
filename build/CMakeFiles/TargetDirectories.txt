@@ -1,3 +1,0 @@
-/mnt/Daten2/CodeProjects/minesweeper/build/CMakeFiles/rebuild_cache.dir
-/mnt/Daten2/CodeProjects/minesweeper/build/CMakeFiles/edit_cache.dir
-/mnt/Daten2/CodeProjects/minesweeper/build/CMakeFiles/main.dir
