@@ -1,6 +1,10 @@
 #include <cstdlib>
 #include <cstdint>
 #include <vector>
+#include <optional>
+
+#define BOMB_FACTOR .1563
+
 
 typedef struct
 {
@@ -11,6 +15,12 @@ typedef struct
 
     uint8_t nr_bomb_neighbours;
 } Field;
+
+typedef struct
+{
+    size_t row;
+    size_t col;
+} FieldPos;
 
 class Minefield
 {
@@ -79,11 +89,14 @@ class Minefield
         void initFields();
 
         /**
-         * Do a cascading reveal when a field with 0 bomb neighbours was hit.
+         * Do a cascading reveal when a non-flag field was hit.
+         *
+         * @param pos: position of the field on the grid
+         *
+         * @returns if a bomb was hit
         */
-        void doCascade(
-            size_t row,
-            size_t col
+        bool doCascade(
+            FieldPos pos
         );
 
         /**
@@ -104,6 +117,15 @@ class Minefield
          * @throws out_of_range: row/col is greater of equal to rows/cols respectively
         */
         Field& getField(size_t row, size_t col);
+
+        /**
+         * Checks if the Position is in bounds and returns a value if it is.
+         *
+         * @param pos: position of the field in the grid
+         *
+         * @returns Field if in bounds
+        */
+        std::optional<Field&> getField(FieldPos pos);
 
     public:
         size_t rows, cols;

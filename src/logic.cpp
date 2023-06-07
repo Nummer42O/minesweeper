@@ -50,7 +50,7 @@ bool Minefield::activateField(size_t row, size_t col) {
 
     current_field.is_revealed = true;
     if (current_field.nr_bomb_neighbours == 0u) {
-        this->doCascade(row, col);
+        this->doCascade(FieldPos{row, col});
     }
 
     return false;
@@ -77,7 +77,7 @@ void Minefield::initFields() {
     std::vector<size_t> mine_indies;
 
     std::random_device random_device;
-    std::mt19937 mersenne_twister(random_device);
+    std::mt19937 mersenne_twister(random_device());
 
     std::sample(
         field_indices.begin(), field_indices.end(),
@@ -91,4 +91,84 @@ void Minefield::initFields() {
     }
 }
 
-//TODO: continue @ doCascade
+bool Minefield::doCascade(FieldPos pos) {
+    std::vector<size_t>     revealed_fields;
+    std::vector<FieldPos>   field_queue = {pos};
+
+    do {
+        FieldPos current_field_pos = field_queue.back();
+        field_queue.pop_back();
+
+        std::optional<Field> current_field = getField(current_field_pos);
+        if (!current_field.has_value()) {
+            continue;
+        }
+        Field field = current_field.value();
+
+        if (field.has_flag) {
+            continue;
+        }
+        if (field.is_mine) {
+            return true;
+        }
+        field.is_revealed = true;
+
+        {
+            //TODO: maybe make left, right, top, bottom vars?
+            field_queue.push_back(FieldPos{
+                current_field_pos.row - 1ul,
+                current_field_pos.col - 1ul,
+            });
+            field_queue.push_back(FieldPos{
+                current_field_pos.row - 1ul,
+                current_field_pos.col,
+            });
+            field_queue.push_back(FieldPos{
+                current_field_pos.row - 1ul,
+                current_field_pos.col + 1ul,
+            });
+            field_queue.push_back(FieldPos{
+                current_field_pos.row,
+                current_field_pos.col - 1ul,
+            });
+            field_queue.push_back(FieldPos{
+                current_field_pos.row,
+                current_field_pos.col + 1ul,
+            });
+            field_queue.push_back(FieldPos{
+                current_field_pos.row + 1ul,
+                current_field_pos.col - 1ul,
+            });
+            field_queue.push_back(FieldPos{
+                current_field_pos.row + 1ul,
+                current_field_pos.col,
+            });
+            field_queue.push_back(FieldPos{
+                current_field_pos.row + 1ul,
+                current_field_pos.col + 1ul,
+            });
+        }
+    } while (!field_queue.empty());
+}
+
+size_t Minefield::calculateNrOfBombs() {
+    return BOMB_FACTOR * this->count;
+}
+
+Field& Minefield::getField(size_t row, size_t col) {
+    if (row >= this->rows) {
+        throw std::out_of_range("row out of range");
+    } else if (col >= this->cols) {
+        throw std::out_of_range("column out of range");
+    }
+
+    return this->fields[row * this->cols + col];
+}
+
+std::optional<Field&> Minefield::getField(FieldPos pos) {
+    if (pos.row >= this->rows || pos.col >= this->cols) {
+        return std::nullopt;
+    }
+
+    return this->fields[pos.row * this->cols + pos.col];
+}
